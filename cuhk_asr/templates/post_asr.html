@@ -1,0 +1,140 @@
+  {% load staticfiles %}
+    <html>
+        <head>
+            {% block javascript %}
+                <script type="text/javascript" src="http://127.0.0.1/New_AsrTest/protoculous-1.0.2-packed.js"></script>
+            {% endblock %}
+            <title >CUHK ASR Test</title>
+            <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+            <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+            <link href="//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+            <link REL="SHORTCUT ICON" HREF="{% static "images/favicon.ico" %}"/>
+            <link rel="stylesheet" href="{% static 'css/asr.css' %}">
+            <style type="text/css">
+                html,body{margin:0; padding: 0;}
+                .m-box .left,.m-box .right {  }
+                .m-box .left{height:300px; position: absolute; width:250px; line-height: 40px; margin-left: 80px; font-size:20px;}
+                .m-box .right{margin-left:400px; margin-right: 80px; line-height: 30px; margin-top: 20px}
+            </style>
+        </head>
+        <body>
+            <div class="page-header">
+                <h1 style="text-align:center">ASR Test</h1>
+            </div>
+            <div class="m-box">
+            <div class="left">
+                <h2>Audio Requirement</h2>
+                <ul >
+                    <li>Input Length: ≤60s</li>
+                    <li>Sampling Rate: 16KHz</li>
+                    <li>Bit Depth: 16bits</li>
+                    <li>Channel: Mono</li>
+                    <li>Format: PCM、 wav</li>
+                </ul>
+            </div>
+
+            <div class="right" >
+                <h2 align="center">  </h2><br>
+                <form enctype="multipart/form-data"  method="post">
+                {% csrf_token %}
+                    <div style="display:flex; ">
+                        <div style="height:70px;width:200px; margin-right:10%">
+                            <input type="file" class="btn btn-lg" name="myfile" id="myfile" style="height: 50px;"/>
+                        </div>
+                        <div style="height:70px;width:200px; margin-left:10%; font-size: large" >
+                            <select name="Language" id="Language" style="height: 50px; width: 150px">
+                                <option value="Mandarian">Mandarian</option>
+                                <option value="Cantonese">Cantonese</option>
+                                <option value="English">English</option>
+                            </select>
+                        </div>
+                        <div style="height:70px;width:250px; margin-left:35%">
+                            <input type="button" class="btn btn-warning btn-lg" id="getupload" name="upload" value="Upload" onclick="ajaxupload()"
+                                   style="height: 50px;width: 120px">
+                        </div>
+                        <!--<div style="height:100px;width:300px; margin-right:20px">-->
+                            <!--<input type="button" class="btn btn-warning btn-lg" id="save" value="Save">-->
+                        <!--</div>-->
+                    </div>
+                </form>
+
+                <fieldset class="fieldset" style="height: 15%">
+                    <legend class="legend"><a href="https://www.xfyun.cn/services/voicedictation">iflytek_ASR</a></legend>
+                    <p style="margin-left: 1%; margin-right: 1%"><span id='rlt1'></span></p>
+                </fieldset>
+                <br>
+                <fieldset class="fieldset" style="height: 15%">
+                    <legend class="legend"><a href="http://ai.baidu.com/tech/speech">baidu_ASR</a></legend>
+                    <p style="margin-left: 1%; margin-right: 1%"><span id='rlt2'></span></p>
+                </fieldset>
+                <br>
+                <fieldset class="fieldset" style="height: 15%">
+                    <legend class="legend"><a href="https://azure.microsoft.com/en-us/services/cognitive-services/speech/">microsoft_ASR</a></legend>
+                    <p style="margin-left: 1%; margin-right: 1%"><span id='rlt3'></span></p>
+                </fieldset>
+                <br>
+                <fieldset class="fieldset" style="height: 15%; margin-bottom: 40px">
+                    <legend class="legend"><a href="https://cloud.google.com/speech-to-text/">google_ASR</a></legend>
+                    <p style="margin-left: 1%; margin-right: 1%"><span id='rlt4'></span></p>
+                </fieldset>
+                <p>{{res_save|linebreaksbr}}</p>
+            </div>
+            </div>
+
+        <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+
+        <script>
+            function ajaxupload() {
+                var form_data = new FormData();
+                var Language = $('#Language').val();
+                var file_info = $('#myfile')[0].files[0];
+                form_data.append('Language',Language);
+                form_data.append('file',file_info);
+                if(document.getElementById("myfile").value == "") { //判断是否有附件
+                    alert('你没有选择任何文件');
+                    return false
+                }
+                document.getElementById("getupload").value="Uploading...";
+                document.getElementById("getupload").disabled=true;
+                if((Language == "English")||(Language == "Cantonese")){
+                    $( '#rlt1').html("讯飞粤语、英语语音听写仅支持单路，不支持多路并发");
+                }
+                else {
+                    $( '#rlt1').html("");
+                }
+                $( '#rlt2').html("");
+                $( '#rlt3').html("");
+                $( '#rlt4').html("");
+                // 提交ajax的请求
+                $.ajax({
+                    url:"/",
+                    type:'POST',
+                    data: form_data,
+                    processData: false,  // tell jquery not to process the data
+                    contentType: false, // tell jquery not to set contentType
+                    success : function(data) {
+                        var obj = jQuery.parseJSON(data)
+                        var errcode = obj.errcode;
+                        if (errcode.length == 0) {
+                            $( '#rlt1').html(obj.rlt1);
+                            $( '#rlt2').html(obj.rlt2);
+                            $( '#rlt3').html(obj.rlt3);
+                            // $( '#rlt4').html(obj.rlt4);
+                        }else{
+                           alert("音频不符合条件！！！")
+                        }
+                        document.getElementById("getupload").value="Upload";
+                        document.getElementById("getupload").disabled=false;
+                    },
+                    error : function(data) {
+                        $( '#result').html(data.status + " : " + data.statusText + " : " + data.responseText);
+                         console.log(data);
+                    }
+                });
+            }
+        </script>
+
+        </body>
+    </html>
+
+

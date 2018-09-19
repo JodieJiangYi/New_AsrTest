@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en" xmlns:font-size="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% block javascript %}
+        <script type="text/javascript" src="http://127.0.0.1/New_AsrTest/protoculous-1.0.2-packed.js"></script>
+    {% endblock %}
+        <title >ASR Test</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link rel="SHORTCUT ICON" href="{% static "images/favicon.ico" %}"/>
+        <link rel="stylesheet" href="{% static 'css/asr.css' %}">
+        <style type="text/css">
+            table {border-collapse: collapse; width: 70%; margin: auto}
+            th, td {padding: 8px; border-bottom: 1px solid #ddd; text-align: center; font-size: 25px}
+            tr:hover {background-color:#f5f5f5;}
+            .m-box .left,.m-box .right {  }
+            .m-box .left{height:300px; position: absolute; width:200px; line-height: 40px; margin-left: 70px; font-size:25px;}
+            .m-box .right{margin-left:330px; margin-right: 70px; line-height: 30px; margin-top: 40px;}
+        </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <h1 style="text-align:center">ASR Test</h1>
+    </div>
+    <div class="m-box">
+        <div class="left">
+            <h2>Reference</h2>
+            <ul >
+                <li>Audio Requirement</li>
+                <li><a href="iflytek_asr">Iflytek_ASR</a></li>
+                <li>Baidu_ASR</li>
+            </ul>
+        </div>
+
+        <div class="right" >
+            <table >
+                <thead >     <!--表头-->
+                    <tr >    <!--一行-->
+                        <th>Audio parameters</th>      <!--一列-->
+                        <th>Iflytek</th>
+                        <th>Baidu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Input Length</td>
+                    <td>≤60s</td>
+                    <td>≤60s</td>
+                </tr>
+                <tr>
+                    <td>Sampling Rate</td>
+                    <td>8KHz、16KHz</td>
+                    <td>16KHz</td>
+                </tr>
+                <tr>
+                    <td>Bit Depth</td>
+                    <td>16bits</td>
+                    <td>16bits</td>
+                </tr>
+                <tr>
+                    <td>Channel</td>
+                    <td>Mono</td>
+                    <td>Mono</td>
+                </tr>
+                <tr>
+                    <td>Format</td>
+                    <td>Mono</td>
+                    <td>pcm、 wav、 amr </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
